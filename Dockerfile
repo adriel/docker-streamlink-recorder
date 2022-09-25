@@ -7,10 +7,10 @@ ENV twitchVersion=1.1.8
 # Streamlink
 ADD "https://github.com/streamlink/streamlink/releases/download/${streamlinkVersion}/streamlink-${streamlinkVersion}.tar.gz" /opt/
 RUN apt-get update && apt-get -y install gosu jq
+RUN pip3 install versioningit
 RUN tar -xzf "/opt/streamlink-${streamlinkVersion}.tar.gz" -C /opt/ && \
 	rm "/opt/streamlink-${streamlinkVersion}.tar.gz" && \
-	cd "/opt/streamlink-${streamlinkVersion}/" && \
-	python setup.py install && \
+	python "/opt/streamlink-${streamlinkVersion}/setup.py" install && \
   rm -r "/opt/streamlink-${streamlinkVersion}/"
 
 # Twitch CLI
@@ -18,8 +18,9 @@ ADD "https://github.com/twitchdev/twitch-cli/releases/download/v${twitchVersion}
 RUN mkdir "/opt/twitch" && \
   tar -xzf "/opt/twitch-cli_${twitchVersion}_Linux_x86_64.tar.gz" -C /opt/twitch && \
 	rm "/opt/twitch-cli_${twitchVersion}_Linux_x86_64.tar.gz" && \
-	cd "/opt/twitch/" && \
-	mv "/opt/twitch/twitch" "/usr/local/bin/" && \
+	mv "/opt/twitch/twitch-cli_${twitchVersion}_Linux_x86_64" "/opt/twitch/twitch-cli" && \
+	mv "/opt/twitch/twitch-cli" "/usr/local/bin/" && \
+  chmod 755 "/usr/local/bin/twitch-cli" && \
   rm -r "/opt/twitch/"
 RUN mkdir -p "/.config/twitch-cli"
 RUN chown 1000:1000 "/.config/twitch-cli"
