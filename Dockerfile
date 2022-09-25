@@ -18,9 +18,8 @@ ADD "https://github.com/twitchdev/twitch-cli/releases/download/v${twitchVersion}
 RUN mkdir "/opt/twitch" && \
   tar -xzf "/opt/twitch-cli_${twitchVersion}_Linux_x86_64.tar.gz" -C /opt/twitch && \
 	rm "/opt/twitch-cli_${twitchVersion}_Linux_x86_64.tar.gz" && \
-	mv "/opt/twitch/twitch-cli_${twitchVersion}_Linux_x86_64" "/opt/twitch/twitch-cli" && \
-	mv "/opt/twitch/twitch-cli" "/usr/local/bin/" && \
-  chmod 755 "/usr/local/bin/twitch-cli" && \
+	mv "/opt/twitch/twitch-cli_${twitchVersion}_Linux_x86_64" "/usr/local/bin/twitch" && \
+  chmod 755 "/usr/local/bin/twitch" && \
   rm -r "/opt/twitch/"
 RUN mkdir -p "/.config/twitch-cli"
 RUN chown 1000:1000 "/.config/twitch-cli"
