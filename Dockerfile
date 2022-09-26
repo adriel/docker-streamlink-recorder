@@ -4,7 +4,7 @@ LABEL maintainer="Adriel"
 ENV streamlinkVersion=5.0.1
 ENV twitchVersion=1.1.8
 
-RUN apt-get update && apt-get -y install gosu jq
+RUN apt-get update && apt-get -y install gosu jq ffmpeg
 
 # Streamlink
 RUN pip3 install "streamlink==${streamlinkVersion}"
