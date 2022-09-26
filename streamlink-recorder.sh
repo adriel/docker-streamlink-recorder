@@ -6,7 +6,7 @@ function check_api {
   channel_info="$1"
   filter="$2"
   api_message=$(echo "$channel_info" | jq --raw-output "$filter")
-  if [[ "$api_message" ]]; then
+  if [[ "$api_message" && "$api_message" != "null" ]]; then
     echo "Twitch API message: $api_message"
     echo "channel_info: $channel_info"
   fi
