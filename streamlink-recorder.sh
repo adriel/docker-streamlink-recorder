@@ -33,6 +33,7 @@ while [[ true ]]; do
     twitch token
     # Try again, now that we have the token, it should work.
     channel_info=$(twitch api get /streams -q "user_login=${streamName}" 2>&1)
+    echo "Token refreshed, now waiting for stream to go live."
   fi
 
   check_api "$channel_info" ".data[0].type"
