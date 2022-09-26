@@ -13,7 +13,7 @@ function check_api {
     fi
   else
     echo "Input isn't json."
-    echo "api_message: $api_message"
+    echo "channel_info: $channel_info"
   fi
 }
 
