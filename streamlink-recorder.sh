@@ -5,10 +5,15 @@
 function check_api {
   channel_info="$1"
   filter="$2"
-  api_message=$(echo "$channel_info" | jq --raw-output "$filter")
-  if [[ "$api_message" && "$api_message" != "null" ]]; then
-    echo "Twitch API message: $api_message"
-    echo "channel_info: $channel_info"
+  if jq -e . >/dev/null 2>&1 <<<"$channel_info"; then # check input is valid json
+    api_message=$(echo "$channel_info" | jq --raw-output "$filter" 2>&1)
+    if [[ "$api_message" && "$api_message" != "null" ]]; then
+      echo "Twitch API message: $api_message"
+      echo "channel_info: $channel_info"
+    fi
+  else
+    echo "Input isn't json."
+    echo "api_message: $api_message"
   fi
 }
 
