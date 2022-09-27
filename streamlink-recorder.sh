@@ -49,7 +49,7 @@ while [[ true ]]; do
     echo "Token refreshed, now waiting for stream to go live."
   fi
 
-  check_api "$channel_info" ".data[0].type"
+  check_api "$channel_info" ".data[0].type" || continue # skip rest of loop if not json
 
   channel_live=$(echo "$channel_info" | jq --raw-output '.data[0].type')
   if [[ "$channel_live" == "live" ]]; then
