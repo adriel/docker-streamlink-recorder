@@ -1,24 +1,32 @@
 #!/usr/bin/env bash
 
+# Check if input is json
+function is_json {
+  jq -e . >/dev/null 2>&1 <<<"$1"
+}
+
 # Check if API returned message then log if message
 # check_api "twitch api json" "json filter"
 function check_api {
   channel_info="$1"
   filter="$2"
-  if jq -e . >/dev/null 2>&1 <<<"$channel_info"; then # check input is valid json
+  if is_json "$channel_info"; then # check input is valid json
     api_message=$(echo "$channel_info" | jq --raw-output "$filter" 2>&1)
-    if [[ "$api_message" && "$api_message" != "null" ]]; then
+    if [[ ! -z "$api_message" ]]; then
       echo "Twitch API message: $api_message"
       echo "channel_info: $channel_info"
     fi
   else
     if [[ "$channel_info" =~ "Client.Timeout" ]]; then
       echo "Timeout - couldn't connect to twitch.com - filter: $filter"
+    elif [[ "$channel_info" =~ "no route to host" ]]; then
+      echo "No route to host - couldn't connect to twitch.com - filter: $filter"
     else
       echo "Input isn't json."
       echo "channel_info: $channel_info"
       echo "filter: $filter"
     fi
+    return 255
   fi
 }
 
@@ -30,7 +38,7 @@ while [[ true ]]; do
 
   channel_info=$(twitch api get /streams -q "user_login=${streamName}" 2>&1)
 
-  check_api "$channel_info" ".message"
+  check_api "$channel_info" ".message" || continue # skip rest of loop if not json
 
   # Check if token needs refreshing
   if [[ "$channel_info" =~ "twitch token" || "$channel_info" =~  "Invalid OAuth token" ]]; then
