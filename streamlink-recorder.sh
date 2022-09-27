@@ -12,8 +12,13 @@ function check_api {
       echo "channel_info: $channel_info"
     fi
   else
-    echo "Input isn't json."
-    echo "channel_info: $channel_info"
+    if [[ "$channel_info" =~ "Client.Timeout" ]]; then
+      echo "Timeout - couldn't connect to twitch.com - filter: $filter"
+    else
+      echo "Input isn't json."
+      echo "channel_info: $channel_info"
+      echo "filter: $filter"
+    fi
   fi
 }
 
