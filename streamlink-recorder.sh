@@ -77,7 +77,7 @@ while [[ true ]]; do
     echo "viewer_count: $viewer_count"
 
     save_dir="/home/download/${game_name}"
-    streamlink "$streamLink" "$streamQuality" "$streamOptions" --stdout | \
+    streamlink "$streamLink" "$streamQuality" $streamOptions --stdout | \
       ffmpeg \
       	-hide_banner \
         -loglevel error \
