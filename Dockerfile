@@ -1,20 +1,20 @@
 FROM python:3.10.7-slim-bullseye
 LABEL maintainer="Adriel"
 
-ENV streamlinkVersion=5.0.1
-ENV twitchVersion=1.1.8
+ENV streamlink_version=5.0.1
+ENV twitch_version=1.1.8
 
 RUN apt-get update && apt-get -y install gosu jq ffmpeg
 
 # Streamlink
-RUN pip3 install "streamlink==${streamlinkVersion}"
+RUN pip3 install "streamlink==${streamlink_version}"
 
 # Twitch CLI
-ADD "https://github.com/twitchdev/twitch-cli/releases/download/v${twitchVersion}/twitch-cli_${twitchVersion}_Linux_x86_64.tar.gz" /opt/
+ADD "https://github.com/twitchdev/twitch-cli/releases/download/v${twitch_version}/twitch-cli_${twitch_version}_Linux_x86_64.tar.gz" /opt/
 RUN mkdir "/opt/twitch" && \
-  tar -xzf "/opt/twitch-cli_${twitchVersion}_Linux_x86_64.tar.gz" -C /opt/twitch && \
-	rm "/opt/twitch-cli_${twitchVersion}_Linux_x86_64.tar.gz" && \
-  mv "/opt/twitch/twitch-cli_${twitchVersion}_Linux_x86_64/twitch" "/usr/local/bin/" && \
+  tar -xzf "/opt/twitch-cli_${twitch_version}_Linux_x86_64.tar.gz" -C /opt/twitch && \
+	rm "/opt/twitch-cli_${twitch_version}_Linux_x86_64.tar.gz" && \
+  mv "/opt/twitch/twitch-cli_${twitch_version}_Linux_x86_64/twitch" "/usr/local/bin/" && \
   rm -r "/opt/twitch/"
 RUN ["chmod", "755", "/usr/local/bin/twitch"]
 RUN mkdir -p "/.config/twitch-cli"
@@ -31,4 +31,4 @@ RUN ["chmod", "+x", "/home/script/entrypoint.sh"]
 
 ENTRYPOINT [ "/home/script/entrypoint.sh" ]
 
-CMD /bin/bash /home/script/streamlink-recorder.sh "$streamOptions" "$streamLink" "$streamQuality" "$streamName"
+CMD /bin/bash /home/script/streamlink-recorder.sh "$stream_options" "$stream_link" "$stream_quality" "$stream_name"
