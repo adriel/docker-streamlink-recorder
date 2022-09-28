@@ -48,16 +48,16 @@ function check_api {
 }
 
 echo "Saving config file."
-twitch configure --client-id "$clientID" --client-secret "$clientSecret"
+twitch configure --client-id "$client_id" --client-secret "$client_secret"
 
 echo "Waiting for stream to go live."
 while [[ true ]]; do
 
-  channel_json=$(twitch api get /streams -q "user_login=${streamName}" 2>&1)
+  channel_json=$(twitch api get /streams -q "user_login=${stream_name}" 2>&1)
   check_api "$channel_json" ".data[0].type"
 
   if is_live "$channel_json"; then
-    echo "$streamName is LIVE!"
+    echo "$stream_name is LIVE!"
 
     date_unix=$(date +'%s')
     user_name=$(      echo "$channel_json" | jq --raw-output '.data[0].user_name')
@@ -78,7 +78,7 @@ while [[ true ]]; do
 
     save_dir="/home/download/${user_name}/${game_name}"
     mkdir -p "$save_dir"
-    streamlink "$streamLink" "$streamQuality" $streamOptions --stdout | \
+    streamlink "$stream_link" "$stream_quality" $stream_options --stdout | \
       ffmpeg \
       	-hide_banner \
         -loglevel error \
