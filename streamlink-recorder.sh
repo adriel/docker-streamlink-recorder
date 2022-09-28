@@ -78,7 +78,7 @@ while [[ true ]]; do
 
     save_dir="/home/download/${user_name}/${game_name}"
     mkdir -p "$save_dir"
-    streamlink "$stream_link" "$stream_quality" $stream_options --stdout | \
+    streamlink "$stream_link" "$stream_quality" $stream_options --loglevel error --stdout | \
       ffmpeg \
       	-hide_banner \
         -loglevel error \
@@ -89,6 +89,8 @@ while [[ true ]]; do
         -c copy \
         -movflags faststart \
         "${save_dir}/${user_name} ${date_unix} ${started_at_safe} ${title} [viewers $viewer_count] (live_dl).mp4"
+
+    echo "Stream ended, finished processing. Watching for next live event."
   fi
   sleep 60s
 done
