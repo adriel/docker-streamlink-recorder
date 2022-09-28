@@ -7,7 +7,14 @@ function is_json {
 
 # Test if live
 function is_live {
-  test "$(echo "$1" | jq --raw-output '.data[0].type')" == "live"
+  json="$1"
+  is_json "$json" && test "$(echo "$json" | jq --raw-output '.data[0].type')" == "live" # only tests live if json
+}
+
+# Returns true only if somewhere in the json there is key + value (not just keys with empty values)
+function has_value {
+  json="$1"
+  echo "$json" | jq -e 'all(.. | strings, arrays; IN("", [], [""])) | not' >/dev/null # true == data, false == no data
 }
 
 # Check if API returned message then log if message
@@ -23,7 +30,7 @@ function check_api {
     echo "Token refreshed, now waiting for stream to go live."
   elif is_json "$channel_json"; then
     filter_response=$(echo "$channel_json" | jq --raw-output "$filter" 2>&1)
-    if [[ "$channel_json" =~ "," && "$filter_response" != "live" ]]; then # if json contains a "," then there is data
+    if has_value "$channel_json" && [[ "$filter_response" != "live" ]]; then # if json has values + not live
       echo "Twitch returned unexpected JSON data."
       echo "filter: $filter"
       echo "filter_response: $filter_response"
