@@ -76,7 +76,8 @@ while [[ true ]]; do
     echo "title: $title"
     echo "viewer_count: $viewer_count"
 
-    save_dir="/home/download/${game_name}"
+    save_dir="/home/download/${user_name}/${game_name}"
+    mkdir -p "$save_dir"
     streamlink "$streamLink" "$streamQuality" $streamOptions --stdout | \
       ffmpeg \
       	-hide_banner \
