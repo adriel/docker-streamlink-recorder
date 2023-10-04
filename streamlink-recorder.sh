@@ -66,6 +66,7 @@ while [[ true ]]; do
     started_at_safe=$(echo "$started_at"   | sed -e 's/[^A-Za-z0-9._-]/./g') # safe name for filesystems
     game_name=$(      echo "$channel_json" | jq --raw-output '.data[0].game_name')
     title=$(          echo "$channel_json" | jq --raw-output '.data[0].title')
+    title_safe=$(     echo "$title" | sed -e 's/[^A-Za-z0-9._\(\) -]/./g') # safe name for filesystems
     viewer_count=$(   echo "$channel_json" | jq --raw-output '.data[0].viewer_count')
 
     echo "user_name: $user_name"
@@ -74,10 +75,23 @@ while [[ true ]]; do
     echo "started_at_safe: $started_at_safe"
     echo "game_name: $game_name"
     echo "title: $title"
+    echo "title_safe: $title_safe"
     echo "viewer_count: $viewer_count"
 
     save_dir="/home/download/${user_name}/${game_name}"
     mkdir -p "$save_dir"
+    max_length=255
+
+    # If filename too long, truncate it
+    if [ ${#save_file} -gt $max_length ]; then
+      # Calculate the amount of characters to trim from the title
+      trim_length=$(( ${#save_file} - max_length ))
+      
+      # Trim the title
+      title_safe="${title_safe:0:$((${#title_safe} - trim_length))}"
+    fi
+    save_file="${user_name} ${date_unix} ${started_at_safe} ${title_safe} [viewers $viewer_count] (live_dl).mp4"
+
     streamlink "$stream_link" "$stream_quality" $stream_options --loglevel error --stdout | \
       ffmpeg \
       	-hide_banner \
@@ -88,7 +102,7 @@ while [[ true ]]; do
         -metadata show="$game_name" \
         -c copy \
         -movflags faststart \
-        "${save_dir}/${user_name} ${date_unix} ${started_at_safe} ${title} [viewers $viewer_count] (live_dl).mp4"
+        "${save_dir}/${save_file}"
 
     echo "Stream ended, finished processing. Watching for next live event."
   fi
