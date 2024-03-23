@@ -1,7 +1,7 @@
 FROM python:3.12.1-slim-bullseye
 LABEL maintainer="Adriel"
 
-ENV streamlink_version=6.7.1
+ENV streamlink_version=6.7.2
 ENV twitch_version=1.1.22
 
 RUN apt-get update && apt-get -y install gosu jq ffmpeg
